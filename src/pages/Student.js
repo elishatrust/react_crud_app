@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 
@@ -7,14 +7,54 @@ import axios from 'axios'
 
 const Student = ({title='Student List'}) => {
 
-    // const [students, setStudents] = useEffect([]);
+    const [students, setStudents] = useState([]);
 
-    useEffect(() =>{
-        axios.get(`http://127.0.0.1:8000/api/students`).then(resp => {
-            console.log(resp);
-            // setStudents(resp.data.students);
-        });
+    useEffect(() => {
+        axios
+            .get(`http://127.0.0.1:8000/api/students`)
+            .then((resp) => {
+                console.log(resp);
+                setStudents(resp.data.students);
+            })
+            .catch((error) => {
+                console.error('There was an error fetching the students!', error);
+            });
     }, []);
+
+    const deleteStudent = (id) => {
+        axios
+            .delete(`http://127.0.0.1:8000/api/students/${id}`)
+            .then(() => {
+        setStudents(students.filter((student) => student.id !== id));
+            })
+        .catch((error) => {
+            console.error('There was an error deleting the student!', error);
+        });
+    };
+
+    const studentDetails = students.map((item, index) => {
+        return (
+            <tr key={index}>
+                <td>{item.id}</td>
+                <td>{item.name}</td>
+                <td>{item.phone}</td>
+                <td>{item.email}</td>
+                <td>{item.gender}</td>
+                <td>{item.program}</td>
+                <td>{item.status}</td>
+                <td>
+                <div className="btn-group" role="group" aria-label="Basic mixed styles example">
+                    <Link to={`/students/${item.id}/edit`} className="btn btn-sm btn-primary">
+                    <i className="bi bi-pencil-square"></i>
+                    </Link>
+                    <button onClick={() => deleteStudent(item.id)} className="btn btn-sm btn-danger">
+                    <i className="bi bi-trash3"></i>
+                    </button>
+                </div>
+                </td>
+            </tr>
+        );
+    });
 
     return (
         <>
@@ -43,29 +83,7 @@ const Student = ({title='Student List'}) => {
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>John Doe</td>
-                                                <td>0987654321</td>
-                                                <td>johndoe@example.com</td>
-                                                <td>Male</td>
-                                                <td>BSc. In CS</td>
-                                                <td>Active</td>
-                                                <td>
-                                                    <div className="btn-group" role="group" aria-label="Basic mixed styles example">
-                                                        <button type="button" className="btn btn-sm btn-primary"><i className="bi bi-pencil-square"></i></button>
-                                                        <button type="button" className="btn btn-sm btn-danger"><i className="bi bi-trash3"></i></button>
-                                                    </div>
-                                                    {/* <Link to="" className='btn btn-sm btn-primary'>
-                                                        <i className="bi bi-pencil-square"></i>
-                                                    </Link>
-                                                    <Link to="" className='btn btn-sm btn-danger '>
-                                                        <i className="bi bi-trash3"></i>
-                                                    </Link> */}
-                                                </td>
-                                            </tr>
-                                        </tbody>
+                                        <tbody>{studentDetails}</tbody> 
                                     </table>                                            
                                 </div>
                             </div>
