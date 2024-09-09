@@ -1,13 +1,20 @@
 
-import React from 'react'
-// import React, { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
+
+
 
 const Student = ({title='Student List'}) => {
 
-    // useEffect(() =>{
+    // const [students, setStudents] = useEffect([]);
 
-    // }, []);
+    useEffect(() =>{
+        axios.get(`http://127.0.0.1:8000/api/students`).then(resp => {
+            console.log(resp);
+            // setStudents(resp.data.students);
+        });
+    }, []);
 
     return (
         <>
@@ -18,7 +25,7 @@ const Student = ({title='Student List'}) => {
                             <div className="card-header"> 
                                 <h4>
                                     {title} 
-                                    <Link to="" className='btn btn-sm btn-primary float-end'> Add Student </Link>  
+                                    <Link to="/" className='btn btn-sm btn-primary float-end'> Add Student </Link>  
                                 </h4>
                             </div>
                             <div className="card-body">
